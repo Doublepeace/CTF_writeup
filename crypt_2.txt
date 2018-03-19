@@ -1,0 +1,21 @@
+2017/9/11 Gamepire from NCU ADLab
+
+topic: Crypto Level2. Substitution cipher
+
+OK 這題是替換加密，然後算是...沒解出來只找到tool??
+給密文：
+MTHJ{CWTNXRJCUBCGXGUGXWREXIPOYAOEYFIGXWRXCHTKHFCOHCFDUCGTXZOHIXOEOWMEHZO}
+
+求FLAG
+一開始能確認MTHJ是對應FLAG，所以猜測是希爾加密，那算了一下之後發現好像不是
+找著找著，突然有人跟我說一個線上解密網站
+quipquip
+然後丟進去..就解出來了。。。。
+
+以後不難的加密就用這個好了
+
+心得：
+挺無言的。。。
+
+
+

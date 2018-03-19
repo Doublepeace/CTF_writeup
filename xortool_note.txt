@@ -1,0 +1,14 @@
+2017/9/16 Gamepire from NCU ADLab
+
+topic: xortool
+
+OK他給了一個檔案叫做xor，那聽說要用xortool解，於是裝了一下
+裝完後下指令：
+xortool -c 20 targetFile
+
+就會噴出一個xor_out
+Done!
+
+感覺這個tool還有很多用處，找時間應該詳細了解一下～
+
+

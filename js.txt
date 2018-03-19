@@ -1,0 +1,32 @@
+2017/8/22 Gamepire from NCU ADL lab
+
+something about javascript~
+https://hackme.inndy.tw/
+
+OK這題他媽的真的很棒，首先題目就叫homepage，點進去就真的是hackme的主頁
+然後提示上說，就我們再看一下code，發現裡面有一個神奇的檔案<script src="cute.js"></script>
+好的我們進去cute.js看看，然後就看到了....亂碼
+那這個亂碼大概長這樣 -> //*織����*/ ['_'];
+然後很多，那看到這個東東還有許多的表情符號，肯定有詐！依該是某一種編碼
+所以就去上網查了一下，果然是一種叫 aaencode 編碼那這種編碼是javascript獨有的
+因為一些js的神奇特性=> []+[]等於空字串，+[]等於零等等等
+欲知詳情請去http://blog.techbridge.cc/2016/07/16/javascript-jsfuck-and-aaencode/
+而且這些編碼是可執行的～
+
+那好既然知道了這個編碼了，那就解碼就好了:)
+找到online decoder了後很開心的複製貼上，就..error了
+嗯看了一下，browser上顯示的估計有被壓縮過
+只好curl https://hackme.inndy.tw/cute.js > aacode.txt
+打開aacode.txt後，媽的檔案靠北大，五萬多個字元
+直接貼上decoder後果然爆掉了...
+又再找了幾個都不OK那只好研究一下把它拆開來decode
+研究後發現此encode有表頭跟結尾
+然後語句跟語句之間要切，必須在兩個表情符號間沒有任何其他符號才可以切
+
+切完然後解碼後發現是一段不包含FLAG的code(我難過QAQ)
+那其實是一段會噴二維碼在consol的程式
+那就寫個aacode.html然後去看consol
+掃碼完就有FLAG嚕～～
+DONE!
+
+

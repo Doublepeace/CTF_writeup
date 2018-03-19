@@ -1,0 +1,23 @@
+2017/9/11 Gamepire from NCU ADLab
+
+topic: Crypto leve1. Services offered by python base64 modual
+
+好簡單的加密題，給了加密過的FLAG
+Nm@rmLsBy{Nm5u-K{iZKPgPMzS2I*lPc%_SMOjQ#O;uV{MM*?PPFhk|Hd;hVPFhq{HaAH<
+
+下面的提示是 pydoc3 base64
+看了一下第一個想法先去查了一下pydoc3是啥，發現是類似--help的東西
+所以就在commend line上打了pydoc3 base64
+裡面列了一大堆base64 modual提供的加解密演算法
+用法：
+import base64
+
+base64.[b64/b32/...]decode(crypString).decode('utf-8')
+
+那就try try看，第一輪try出了一個叫 b85(base85) 的encode method(其他都噴error)
+有了新字串後再try一次，最後try出用b32在解一次就解出明文了
+
+Done!
+
+
+

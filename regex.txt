@@ -1,0 +1,31 @@
+ patt = "FLAG{[^()\[\]{}@]+}"
+>>> fiind()
+['FLAG{VizQLeu9M3aybJBA3f1AgFROGyuTLXZ2oeRbKf1Agf1AgFLAG9hBTI}']
+>>> patt = "FLAG{[a-z A-Z 0-9]+}
+  File "<stdin>", line 1
+    patt = "FLAG{[a-z A-Z 0-9]+}
+                               ^
+SyntaxError: EOL while scanning string literal
+>>> patt = "FLAG{[a-z A-Z 0-9]+}"
+>>> fiind()
+['FLAG{VizQLeu9M3aybJBA3f1AgFROGyuTLXZ2oeRbKf1Agf1AgFLAG9hBTI}']
+>>> patt = "FLAG{[^()\[\]{}]+}"
+>>> fiind()
+['FLAG{fXuGWInH8fl@gf1AgpFxzO54eih}', 'FLAG{f1Agf1Agfl@g6twdS3ZHRQEIXnf1Agp7IdTB}', 'FLAG{f1Agf1AgFROGlFQJivFROGf1AgpSrsl8dDyfl@gFROGf1Agf1AgirC2d}', 'FLAG{CUsdtwk7rzioAJOzuiT54SFjbKO1IWJ74@Mvpf1AgQ0bIPRiMYf1AgJqdYipau0}', 'FLAG{M4i8gtG95@oOPFg1qr8K}', 'FLAG{VizQLeu9M3aybJBA3f1AgFROGyuTLXZ2oeRbKf1Agf1AgFLAG9hBTI}']
+>>> exit
+Use exit() or Ctrl-D (i.e. EOF) to exit'
+
+2017/8/28 Gamepire from NCU ADLab
+
+regex practice
+
+OK這次呢，他給了一個檔案，裡面充滿了Fl@g等等亂碼，提示是regex
+那就用python re modual來找一下，那對的FLAG形式是FLAG{這裡不能有特殊符號}
+所以regular pattern可以用："FLAG{[^()\[\]{}@]+}" 或 patt = "FLAG{[a-z A-Z 0-9]+}"
+上面是cmd指令碼紀錄
+fiind():
+	print(re.findall(patt,fileObj.read()))
+
+
+DONE!
+

@@ -1,0 +1,54 @@
+2017/8/22 Gamepire from NCU ADLab
+
+topc: commend inj on https://hackme.inndy.tw/ping/
+
+OK進到頁面直接給你看source code:
+<?php
+require('config.php');
+
+function ping($ip) {
+    global $blacklist;
+
+    if(strlen($ip) > 12) {
+        return 'IP toooooo longgggggggggg';
+    } else {
+        foreach($blacklist as $keyword) {
+            if(strstr($ip, $keyword)) {
+                return "{$keyword} not allowed";
+            }
+        }
+        write_log($ip);
+        $ret = [];
+        exec("ping -c 1 \"{$ip}\" 2>&1", $ret);
+        return implode("\n", array_slice($ret, 0, 8));
+    }
+}
+
+if(!empty($_POST['ip']))
+    echo htmlentities(ping($_POST['ip']));
+else
+    highlight_file(__FILE__);
+
+看到關鍵字exec就大概知道是commend inj了
+那就不演了，直接測試各種符號
+發現;&|等都被擋掉了，那就去找看看其他的可能
+找了很久，發現還有這個東東``反引號
+//引用網路
+在bash中兩個`  `之間为可以先執行的指令，也可以用$()代替。
+比如要先找出build.xml，然後再列出這個文件的詳細信息，可以用如下指令完成
+ls -l `locate build.xml`或ls -l $(locate build.xml)
+那麼這個`反引號怎麼打呢。。就在鍵盤左上角，數字1的左邊，ESC的下面，看到沒~
+//
+`ls`後，直接噴出了包括flag.php等檔案的目錄
+接下來要把flag.php搞出來，試了一下不是輸入太長，就是被檔字串
+flag g cat都被擋掉
+那解決payload太長 -> 用f*
+沒cat，那去找head代替
+最後`head f*`
+就噴出來啦啦啦～
+
+心得：
+這次根本linux實力大考驗...
+找反引號花了一小時，找head跟f*在花一小時，刻骨銘心啊XDDD
+
+

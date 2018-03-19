@@ -1,0 +1,57 @@
+2017/9/13 Gamepire from NCU ADLab
+
+topic: Cypto level 3 Vigenere cipher.
+
+嗯～經典的古典加密，傳說在很長的一段時間是處於無解的狀態
+好，那去查了一下怎麼解密，說是要用分段頻率分析
+
+由於Vigenere cipher是循環Caesar cipher，所以如果我們可以先找出循環的頻率
+也就是密鑰長度，那就可以針對循環中的各個字母去做凱薩解密
+
+step1: Find length of key!
+	
+	找出密鑰也是要用頻率分析，所以去try每一個循環字串有沒有符合正常字串的字母分佈
+	ex. suppose len(key) == n 那就把1,n+1,2n+1...拿去做頻率分析
+	然後找出合理的n～
+
+step2: Find the key!
+
+	對每個循環子母去做位移，然後看位移後他的字母分佈，重複找出正確密鑰～
+  
+
+最後在用密鑰解出密文：
+
+$python3
+>from pycipher import Vigenere
+>Vigenere('key').decipher('encrypted string')
+
+online decoder:
+https://planetcalc.com/2468/
+
+Done!
+.
+.
+.
+才怪。。。
+
+好啦，這邊我在做頻率分析的時候，出現了一些問題，就是分析不出結果來....
+寫了兩三個tools然後分析不出個屁，搞了很久
+最後重新去看密文，發現....密文竟然有空格！？
+果斷猜測是提示，一開始是V KGIFEI
+那一開始只有一個字開頭，那肯定是A，所以說密鑰第一個字母應該是V
+疑？難道是vigenere
+try一下發現對了但是不止，再來猜vigenerecipher
+出現了...caesarsalad...字樣，google一下發現是凱塞沙拉英文版維基百科第一行字～～
+OK!
+把整串密文跟，整串維基百科相減，然後轉成字串，找出循環
+發現密鑰VIGENERECIPHERCANBECRACKEDBYFREQUENCYANALYSISATTACK
+((馬的長度51的密鑰會不會太狠=.=
+就解出來了～～
+
+Finally done!
+
+心得：
+感覺密鑰到了一定長度後....Vigenere加密還是有點無解，還是需要一點魔法？？
+
+
+

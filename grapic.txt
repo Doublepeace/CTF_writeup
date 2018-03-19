@@ -1,0 +1,17 @@
+2017/8/22 Gamepire from NCU ADL lab
+
+Graphic!!
+
+OK這裡有兩題都是graphic
+第一題科基，圖片分析一下就出來了
+done!
+
+第二題，圖片分析失敗
+那旁邊幾摳大直接就hex，把FLAG噴了出來
+所以就學他xxd television.bmp
+把FLAG噴出來
+done!
+
+心得：
+摳哥說，圖題就三種類型，以上是兩種，還有一種忘了，之後遇到再說吧～～
+

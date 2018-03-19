@@ -1,0 +1,27 @@
+2017/9/12 Gamepire from NCU ADLab
+
+topic: pdf easy?
+
+這一題給了一個pdf檔 easy.pdf然後要你找FLAG
+
+一開始不知道該如何下手，去爬了幾篇文章，載了一些處理pdf的工具
+像是pdf-paser.py and pdfid.py
+
+分析了一下什麼都沒有，之後找到了一個線上的tool 叫做
+PDF Examiner
+https://www.pdfexaminer.com/
+
+丟進去後在 -> Object 4.0 @ 22
+裡面找到了
+FLAG{T) 111 (ex
+t in PDF is easy
+ to r) 18 (ecove
+r}
+
+復原一下變成
+FLAG{Text in PDF is easy to recover}
+
+Done!
+
+心得：
+感覺還沒對 .pdf 檔案熟悉，之後還要去了解一下。

